@@ -2,6 +2,8 @@ package distributedBank;
 
 import java.util.HashMap;
 
+//we should probably change this class into a singleton class if we need to.
+
 public class ServerAccMgr {
 	
 	HashMap<Integer, Account> acc_list; 
