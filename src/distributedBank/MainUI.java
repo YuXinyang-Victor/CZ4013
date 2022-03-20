@@ -55,6 +55,8 @@ public class MainUI {
 						}
 						
 					}
+					System.out.println("Please input the amount you want to deposit:");
+					double deposit_amount = scanner.nextDouble();
 					
 					System.out.println("Processing your request, please wait...");
 					//begin to summarize the inputs for message module
