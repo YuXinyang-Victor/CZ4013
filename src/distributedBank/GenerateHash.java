@@ -10,7 +10,7 @@ public class GenerateHash {
 		
 	}
 	
-	public String generateHash(String input)  {
+	public static String generateHash(String input)  {
 		MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("SHA-1");

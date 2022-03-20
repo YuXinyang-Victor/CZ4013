@@ -9,7 +9,7 @@ public class CurrencyConverter {
 		this.current = current; 
 	}
 	
-	public Double getConversionRate() {
+	public static Double getConversionRate() {
 		double original_rate = original.rate(); 
 		double current_rate = current.rate(); 
 		
