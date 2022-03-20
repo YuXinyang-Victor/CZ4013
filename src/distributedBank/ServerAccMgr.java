@@ -16,7 +16,7 @@ public class ServerAccMgr {
 	}
 
 	//acc creation
-	public int createAccount(String name_in, String passwordHash_in, CurrencyType currency_in, Float initAccBalance_in) {
+	public int createAccount(String name_in, String passwordHash_in, CurrencyType currency_in, Double initAccBalance_in) {
 		Integer account_number = next_acc_number; 
 		next_acc_number += 1; //as early as possible to reserve the number
 		account_number = acc_list.size();
