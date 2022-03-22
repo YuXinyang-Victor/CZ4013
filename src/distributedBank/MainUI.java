@@ -17,6 +17,11 @@ public class MainUI {
 		System.out.println("Please select a type of service: ");
 	}
 	
+	public static void displayMsg(String message) {
+		System.out.println(message);
+		
+	}
+	
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		GenerateHash hash_generator = new GenerateHash();
@@ -216,4 +221,5 @@ public class MainUI {
 		
 		
 	}
+	
 }

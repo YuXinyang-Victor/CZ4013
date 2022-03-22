@@ -56,6 +56,8 @@ public class ClientMarshal {
 		
 		byte[] output = new byte[name_length + pwd_length + currency_length + amount_length];
 		
+		return output;
+		
 	}
 
 }
