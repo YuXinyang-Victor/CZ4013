@@ -38,4 +38,37 @@ public class ServerComm {
 	}
 	
 	//serverListen: call unmarshaling, categorize the information received, and call manager to do the job according to opcode
+	
+	public void serverListen() throws IOException {
+		//This method should be called immediately after construction of server module
+		
+		DatagramPacket dp_receive = null;
+		
+		while (true) {
+			dp_receive = new DatagramPacket(receive, receive.length);
+			
+			ds_server.receive(dp_receive);
+			
+			byte[] received_msg = dp_receive.getData();
+			
+			
+			//Testing lines
+			String message = new String(received_msg);
+			System.out.println(message);
+			
+			InetAddress client_address = dp_receive.getAddress();
+			int client_port = dp_receive.getPort();
+			int msg_length = dp_receive.getLength();
+			
+			System.out.println("The msg comes from: " + client_address.toString() + " port: " + client_port + " with length: " + msg_length);
+			
+			//end of testing lines
+			
+			receive = new byte[65535];
+			
+			
+			
+			
+		}
+	}
 }
