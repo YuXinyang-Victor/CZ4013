@@ -20,8 +20,8 @@ public class ClientComm {
 		DatagramSocket ds = new DatagramSocket(2022);
 		
 		try {
-			byte[] ip_byte = {127,0,0,1};
-			ip = InetAddress.getByAddress(ip_byte);
+			String ip_str = "127.0.0.1";
+			ip = InetAddress.getByName(ip_str);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -34,7 +34,7 @@ public class ClientComm {
 		byte[] buffer = marshalled;
 		//change here for stub testing
 		
-		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2022);
+		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2023);
 		ds_client.send(dp_send);
 	}
 	

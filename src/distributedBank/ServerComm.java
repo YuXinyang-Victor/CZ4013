@@ -16,11 +16,11 @@ public class ServerComm {
 	
 	public ServerComm() throws SocketException {
 		receive = new byte[65535];
-		DatagramSocket ds = new DatagramSocket(2022);
+		DatagramSocket ds = new DatagramSocket(2023);
 		
 		try {
-			byte[] ip_byte = {127,0,0,1};
-			ip = InetAddress.getByAddress(ip_byte);
+			String ip_str = "127.0.0.1";
+			ip = InetAddress.getByName(ip_str);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -50,7 +50,7 @@ public class ServerComm {
 			ds_server.receive(dp_receive);
 			
 			byte[] received_msg = dp_receive.getData();
-			
+			System.out.println(received_msg);
 			
 			//Testing lines
 			String message = new String(received_msg);
