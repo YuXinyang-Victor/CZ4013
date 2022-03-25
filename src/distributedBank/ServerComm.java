@@ -52,6 +52,8 @@ public class ServerComm {
 			byte[] received_msg = dp_receive.getData();
 			System.out.println(received_msg);
 			
+			//call request handler from server main
+			
 			//Testing lines
 			String message = new String(received_msg);
 			System.out.println(message);
