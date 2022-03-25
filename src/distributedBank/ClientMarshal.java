@@ -1,6 +1,8 @@
 package distributedBank;
 
 import java.util.ArrayList;
+import org.apache.commons.lang3.ArrayUtils;
+
 
 public class ClientMarshal {
 	
@@ -35,7 +37,7 @@ public class ClientMarshal {
 	}
 	
 	//We will be using polymorphism to deal with different marshaling requirements
-	public byte[] marshal1(String name, String password_hash, CurrencyType currency, double amount) {
+	public byte[] marshal(String name, String password_hash, CurrencyType currency, double amount) {
 		int field_count = 4;
 		int opcode = 1;
 		
@@ -50,6 +52,8 @@ public class ClientMarshal {
 		int amount_length = marshalled_amount.length;
 		
 		ArrayList<Byte> output_list = new ArrayList<Byte>();
+		
+		
 		
 		//convert byte arrays to Bytes, add the length before each byte array. After all is done, convert arraylist back to byte array.
 		
