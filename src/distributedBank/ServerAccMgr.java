@@ -20,7 +20,9 @@ public class ServerAccMgr {
 	}
 	
 	private ServerAccMgr() {
-		next_acc_number = 0; 
+		next_acc_number = 0;
+		
+		acc_list = new HashMap<Integer, Account>();
 	}
 
 	//acc creation

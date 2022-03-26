@@ -5,13 +5,12 @@ import java.net.SocketException;
 
 public class ServerMain {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		//initialize server communication module
-		
+		ServerComm server_comm = ServerComm.getServerComm();
+		server_comm.serverListen();
 		//initialize serveraccountmanager
-		
-		
 	}
 	
 	public static void mainHandler(byte[] message_in) throws IOException {
@@ -23,7 +22,9 @@ public class ServerMain {
 		//handle according to opcode
 		String message = new String();
 		switch (opcode) {
-			case 1: message = typeOneHandler(message_in); break;
+			case 1: 
+				System.out.println("mainhandler called in case 1");
+				message = typeOneHandler(message_in); break;
 			
 			default: break;
 		}
@@ -41,6 +42,8 @@ public class ServerMain {
 		
 		//Because of predetermined protocol, server knows that for opcode 1, it is a request for account creation
 		//The first field after uuid is going to be name, followed by password, currency, and amount
+		
+		System.out.println("type one handler called");
 		int curr_pos = 4;
 		
 		int name_length = ServerUnmarshal.getFieldLength(curr_pos, message_in);
@@ -72,6 +75,7 @@ public class ServerMain {
 		
 		int account_number = account_manager.createAccount(name, password, currency_type, amount);
 		String message = "Your account has been created with account number" + Integer.toString(account_number);
+		System.out.println(message);
 		
 		return message;
 		

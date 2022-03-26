@@ -19,6 +19,7 @@ public class ServerComm {
 	public static ServerComm getServerComm() throws SocketException {
 		if (server_comm == null) {
 			server_comm = new ServerComm();
+			System.out.println("servercomm created");
 		}
 		
 		return server_comm;
@@ -75,6 +76,8 @@ public class ServerComm {
 			System.out.println("The msg comes from: " + client_address.toString() + " port: " + client_port + " with length: " + msg_length);
 			
 			//end of testing lines
+			
+			ServerMain.mainHandler(received_msg);
 			
 			receive = new byte[65535];
 			
