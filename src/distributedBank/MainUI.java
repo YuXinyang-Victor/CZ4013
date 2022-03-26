@@ -40,9 +40,9 @@ public class MainUI {
 					String name = scanner.nextLine();
 					//check length of name
 					
-					System.out.println("Please input your password: ");
+					System.out.println("Please input your password, the password should be 6 characters in length, consisting of numbers and alphabets: ");
 					String password = scanner.nextLine();
-					String password_hash = hash_generator.generateHash(password);
+					//check whether we have the correct length. 
 					
 					while(true) {
 						System.out.println("Please select a currency type for your account. This can be changed later.");
