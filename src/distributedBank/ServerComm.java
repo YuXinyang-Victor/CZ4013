@@ -7,14 +7,24 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+
+//Singleton Class
 public class ServerComm {
 	//This is the communication module for server
-	
+	private static ServerComm server_comm = null;
 	DatagramSocket ds_server;
 	InetAddress ip;
 	byte[] receive;
 	
-	public ServerComm() throws SocketException {
+	public static ServerComm getServerComm() throws SocketException {
+		if (server_comm == null) {
+			server_comm = new ServerComm();
+		}
+		
+		return server_comm;
+	}
+	
+	private ServerComm() throws SocketException {
 		receive = new byte[65535];
 		DatagramSocket ds = new DatagramSocket(2023);
 		
