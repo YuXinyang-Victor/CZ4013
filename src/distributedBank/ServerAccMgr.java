@@ -2,16 +2,24 @@ package distributedBank;
 
 import java.util.HashMap;
 
-//we should probably change this class into a singleton class if we need to.
+//change this class into a singleton class.
 
 public class ServerAccMgr {
+	
+	private static ServerAccMgr server_account_manager = null;
 	
 	HashMap<Integer, Account> acc_list; 
 	int next_acc_number; 
 	//List of observers
 	
+	public static ServerAccMgr getManager() {
+		if (server_account_manager == null)
+			server_account_manager = new ServerAccMgr();
+ 
+        return server_account_manager;
+	}
 	
-	public ServerAccMgr() {
+	private ServerAccMgr() {
 		next_acc_number = 0; 
 	}
 
