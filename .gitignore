@@ -1,3 +1,5 @@
 /bin
 *.jar
 .classpath
+src/distributedBank/RandomNotes.java
+src/commtest/MarshalTest.java
