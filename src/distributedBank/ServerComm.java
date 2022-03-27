@@ -7,14 +7,25 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+
+//Singleton Class
 public class ServerComm {
 	//This is the communication module for server
-	
+	private static ServerComm server_comm = null;
 	DatagramSocket ds_server;
 	InetAddress ip;
 	byte[] receive;
 	
-	public ServerComm() throws SocketException {
+	public static ServerComm getServerComm() throws SocketException {
+		if (server_comm == null) {
+			server_comm = new ServerComm();
+			System.out.println("servercomm created");
+		}
+		
+		return server_comm;
+	}
+	
+	private ServerComm() throws SocketException {
 		receive = new byte[65535];
 		DatagramSocket ds = new DatagramSocket(2023);
 		
@@ -52,6 +63,8 @@ public class ServerComm {
 			byte[] received_msg = dp_receive.getData();
 			System.out.println(received_msg);
 			
+			//call request handler from server main
+			
 			//Testing lines
 			String message = new String(received_msg);
 			System.out.println(message);
@@ -63,6 +76,8 @@ public class ServerComm {
 			System.out.println("The msg comes from: " + client_address.toString() + " port: " + client_port + " with length: " + msg_length);
 			
 			//end of testing lines
+			
+			ServerMain.mainHandler(received_msg);
 			
 			receive = new byte[65535];
 			

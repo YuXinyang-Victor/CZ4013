@@ -10,12 +10,20 @@ import java.util.Scanner;
 
 public class ClientComm {
 	// This is the communication module for client
-	
+	private static ClientComm client_comm = null;
 	DatagramSocket ds_client;
 	InetAddress ip;
 	byte[] receive;
 	
-	public ClientComm() throws SocketException {
+	public static ClientComm getClientComm() throws SocketException {
+		if (client_comm == null) {
+			client_comm = new ClientComm();
+		}
+		
+		return client_comm;
+	}
+	
+	private ClientComm() throws SocketException {
 		receive = new byte[65535];
 		DatagramSocket ds = new DatagramSocket(2022);
 		
@@ -49,7 +57,7 @@ public class ClientComm {
 			ds_client.receive(dp_receive);
 			ClientUnmarshal unpacker = new ClientUnmarshal();
 			String msg = unpacker.unmarshal(receive);  //Let server convert everything to string message then send. client just need to display after unmarshaling
-			MainUI.displayMsg(msg); 
+			distributedBank.displayMsg(msg); 
 			
 			receive = new byte[65535];
 			
