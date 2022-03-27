@@ -13,7 +13,8 @@ public class ServerComm {
 	//This is the communication module for server
 	private static ServerComm server_comm = null;
 	DatagramSocket ds_server;
-	InetAddress ip;
+	InetAddress client_address;
+	int client_port;
 	byte[] receive;
 	
 	public static ServerComm getServerComm() throws SocketException {
@@ -29,13 +30,6 @@ public class ServerComm {
 		receive = new byte[65535];
 		DatagramSocket ds = new DatagramSocket(2023);
 		
-		try {
-			String ip_str = "127.0.0.1";
-			ip = InetAddress.getByName(ip_str);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		ds_server = ds;
 	}
@@ -44,7 +38,7 @@ public class ServerComm {
 		byte[] buffer = marshalled;
 		//change here for stub testing
 		
-		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2022);
+		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, client_address, client_port);
 		ds_server.send(dp_send);
 	}
 	
@@ -69,8 +63,8 @@ public class ServerComm {
 			String message = new String(received_msg);
 			System.out.println(message);
 			
-			InetAddress client_address = dp_receive.getAddress();
-			int client_port = dp_receive.getPort();
+			client_address = dp_receive.getAddress();
+			client_port = dp_receive.getPort();
 			int msg_length = dp_receive.getLength();
 			
 			System.out.println("The msg comes from: " + client_address.toString() + " port: " + client_port + " with length: " + msg_length);
