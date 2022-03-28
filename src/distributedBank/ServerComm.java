@@ -42,6 +42,14 @@ public class ServerComm {
 		ds_server.send(dp_send);
 	}
 	
+	public void serverSend(byte[] marshalled, InetAddress ip, int port) throws IOException {
+		byte[] buffer = marshalled;
+		//change here for stub testing
+		
+		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, port);
+		ds_server.send(dp_send);
+	}
+	
 	//serverListen: call unmarshaling, categorize the information received, and call manager to do the job according to opcode
 	
 	public void serverListen() throws IOException {

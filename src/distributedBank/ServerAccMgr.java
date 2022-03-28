@@ -33,8 +33,14 @@ public class ServerAccMgr {
 		account_number = acc_list.size();
 		Account new_acc = new Account(account_number.intValue(), name_in, passwordHash_in, currency_in, initAccBalance_in);//call the constructor to create a new object
 		acc_list.put(account_number, new_acc); //reference to the object from the acclist 
-		notifyAllObservers(account_number.intValue());
+		//notifyAllObservers(account_number.intValue());
 		System.out.println(acc_list);
+		try {
+			startCallback(account_number.intValue());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return account_number; 
 	}
 	
@@ -46,6 +52,12 @@ public class ServerAccMgr {
 		if (isValid) {
 			System.out.println("details are valid");
 			acc_list.remove(Integer.valueOf(account_number));
+			try {
+				startCallback(account_number);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return true; 
 		}
 		else {
@@ -73,6 +85,14 @@ public class ServerAccMgr {
 				//trigger not enough balance notification
 				sendErrorMessage(2);
 			}
+			else {
+				try {
+					startCallback(account_number);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			return new_balance; 
 		}
 		else {
@@ -89,6 +109,12 @@ public class ServerAccMgr {
 		boolean isValid = checkProvidedInfo(account_number, name_in, passwordHash_in); 
 		if (isValid) {
 			acc_list.get(Integer.valueOf(account_number)).updateCurrency(currency_in);
+			try {
+				startCallback(account_number);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//do conversion of deposit amount according to rates
 			return true; 
 		}
@@ -125,7 +151,13 @@ public class ServerAccMgr {
 				}
 				
 				Double new_balance_to = to_account.updateAccBalance(amount);
-				
+				try {
+					startCallback(to_account_number);
+					startCallback(from_account_number);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 			
 				return new_balance_from; 
@@ -144,11 +176,6 @@ public class ServerAccMgr {
 		}
 	}
 	
-	//triggering function called after any updates to bank accounts (creation, closing, deposit, withdrawal), this function sends out a msg to update observers
-	public void notifyAllObservers(int account_number) {
-		Account updated_account = acc_list.get(Integer.valueOf(account_number));
-		//send out info using list of observers, we need to decide if we send out instance or send out the value of fields. The easier one preferred. 
-	}
 	
 	//error handling functions that send a msg to user indicating the type of error encountered
 	public void sendErrorMessage(int err_type) throws IOException {
@@ -167,7 +194,31 @@ public class ServerAccMgr {
 	//currency types do not match, transfer not allowed notification - 3
 	//target account not found notification - 4
 	
-	//
+	//update callback
+	//triggering function called after any updates to bank accounts (creation, closing, deposit, withdrawal), this function sends out a msg to update observers
+	public void startCallback(int acc_number) throws IOException {
+		Account updated_acc = acc_list.get(acc_number);
+		if (updated_acc == null) {
+			String msg = "Account " + acc_number + " has been closed";
+			byte[] msg_byte = msg.getBytes();
+			try {
+				CallbackMgr cb_mgr = CallbackMgr.getCallbackMgr();
+				cb_mgr.callClient(msg_byte);
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else {
+			try {
+			ServerMain.updateHandler(updated_acc);
+			} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
+		}
+	}
 	
 	
 	

@@ -1,6 +1,7 @@
 package distributedBank;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.UUID;
 
@@ -24,6 +25,9 @@ public class ServerMain {
 		String message = new String();
 		message = "error in opcode.";
 		switch (opcode) {
+			case 0: 
+				System.out.println("mainhandler called in case 0");
+				message = registerHandler(); break;
 			case 1: 
 				System.out.println("mainhandler called in case 1");
 				message = typeOneHandler(message_in); break;
@@ -46,6 +50,21 @@ public class ServerMain {
 		byte[] msg_byte = message.getBytes();
 		server_comm.serverSend(msg_byte);
 		
+		
+	}
+	
+	//register callback
+	public static String registerHandler() throws SocketException {
+		ServerComm server_comm = ServerComm.getServerComm();
+		InetAddress client_address = server_comm.client_address;
+		int client_port = server_comm.client_port;
+		
+		CallbackMgr cb_mgr = CallbackMgr.getCallbackMgr();
+		
+		cb_mgr.registerClient(client_address, client_port);
+		
+		String message = "register successful";
+		return message;
 		
 	}
 	
@@ -304,6 +323,28 @@ public class ServerMain {
 		ServerComm server_comm = ServerComm.getServerComm();
 		byte[] msg_byte = err_msg.getBytes();
 		server_comm.serverSend(msg_byte);
+	}
+	
+	public static void updateHandler(Account acc) throws IOException {
+		CallbackMgr cb_mgr = CallbackMgr.getCallbackMgr();
+		String msg_base = "This account is updated: \n";
+		String acc_id = "Account ID: " + String.valueOf(acc.accNumber) + "\n";
+		String acc_name = "Account name: " + acc.getName() + "\n";
+		String currency = "Currency type: " + acc.getCurrency().name() + "\n";
+		String deposit = "Deposit: " + String.valueOf(acc.getAccBalance());
+		String msg = msg_base + acc_id + acc_name + currency + deposit;
+		byte[] msg_byte = msg.getBytes();
+		try {
+			cb_mgr.callClient(msg_byte);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void sendUpdate(InetAddress ip, int port, byte[] msg) throws IOException {
+		ServerComm server_comm = ServerComm.getServerComm();
+		server_comm.serverSend(msg, ip, port);
 	}
 	
 }

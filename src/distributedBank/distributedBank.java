@@ -16,7 +16,9 @@ public class distributedBank extends Thread{
 		System.out.println("4: Withdraw cash");
 		System.out.println("5: Transfer");
 		System.out.println("6: Change currency type of account");
+		System.out.println("0: Register for account monitoring");
 		System.out.println("7: Exit");
+		
 		System.out.println("Please select a type of service: ");
 	}
 	
@@ -41,6 +43,13 @@ public class distributedBank extends Thread{
 			scanner.nextLine();
 			
 			switch(service_type) {
+				case 0: {
+					System.out.println("you are registering for the account monitoring system.");
+					client_comm.clientRegister();
+					
+					System.out.println("Processing your request, please wait...");
+					break;
+				}
 				case 1: {
 					//create account part
 					String name; 

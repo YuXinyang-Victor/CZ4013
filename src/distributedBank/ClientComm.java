@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 
 public class ClientComm {
 	// This is the communication module for client
@@ -40,6 +41,29 @@ public class ClientComm {
 	public void clientSend(byte[] marshalled) throws IOException {
 		byte[] buffer = marshalled;
 		//change here for stub testing
+		
+		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2023);
+		ds_client.send(dp_send);
+	}
+	
+	public void clientRegister() throws IOException {
+		int opcode = 0;
+		
+		int buf_len = 40; 
+		
+		ByteBuffer buf = ByteBuffer.allocate(buf_len);
+		
+		ByteBuffer c = ByteBuffer.allocate(4);
+		c.putInt(opcode);
+		byte[] opcode_byte = c.array();
+		
+		buf.put(opcode_byte);
+		
+		//insert uuid
+		byte[] uuid = ClientMarshal.getUUID();
+		buf.put(uuid);
+		
+		byte[] buffer = buf.array();
 		
 		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2023);
 		ds_client.send(dp_send);
