@@ -2,10 +2,11 @@ package distributedBank;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.UUID;
 
 public class ServerUnmarshal {
 	public static int peekOpcode(byte[] message_in) {
-		byte[] opcode_byte = Arrays.copyOfRange(message_in, 0, 5);
+		byte[] opcode_byte = Arrays.copyOfRange(message_in, 0, 4);
 		ByteBuffer b = ByteBuffer.wrap(opcode_byte);
 		int opcode = b.getInt();
 		return opcode;
@@ -36,10 +37,12 @@ public class ServerUnmarshal {
 		return field_value;
 	}
 	
-	public static String getUUID(byte[] message_in) {
-		String UUID = new String(); 
+	public static UUID getUUID(byte[] message_in) {
+		byte[] uuid_byte = Arrays.copyOfRange(message_in, 4, 40);
+		String uuid_str  = new String(uuid_byte);
+		UUID uuid = UUID.fromString(uuid_str);
 		//Since the field for UUID is fixed, just get it from the message and convert to string (or other data type as needed)
-		return UUID; 
+		return uuid; 
 	}
 	
 }

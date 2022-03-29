@@ -1,13 +1,17 @@
-package distributedBank;
+package commtest;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-//We should do all input validation checkings in this class
+import distributedBank.ClientComm;
+import distributedBank.ClientMarshal;
+import distributedBank.CurrencyType;
+import distributedBank.ServerAccMgr;
+import distributedBank.distributedBank;
 
-public class distributedBank extends Thread{
-	
+
+
+public class FunctionalTest {
 	public static void welcomeDisplay() {
 		System.out.println("Welcome to distributed banking system, please follow the instructions and select your service.");
 		System.out.println("1: Create an account");
@@ -16,9 +20,7 @@ public class distributedBank extends Thread{
 		System.out.println("4: Withdraw cash");
 		System.out.println("5: Transfer");
 		System.out.println("6: Change currency type of account");
-		System.out.println("0: Register for account monitoring");
 		System.out.println("7: Exit");
-		
 		System.out.println("Please select a type of service: ");
 	}
 	
@@ -28,6 +30,7 @@ public class distributedBank extends Thread{
 	}
 	
 	public static void main(String[] args) throws IOException {
+		ServerAccMgr mgr = ServerAccMgr.getManager();
 		Scanner scanner = new Scanner(System.in);
 		ClientComm client_comm = ClientComm.getClientComm();
 		//client_comm.clientListen();
@@ -43,13 +46,6 @@ public class distributedBank extends Thread{
 			scanner.nextLine();
 			
 			switch(service_type) {
-				case 0: {
-					System.out.println("you are registering for the account monitoring system.");
-					client_comm.clientRegister();
-					
-					System.out.println("Processing your request, please wait...");
-					break;
-				}
 				case 1: {
 					//create account part
 					String name; 
@@ -111,11 +107,12 @@ public class distributedBank extends Thread{
 					
 					
 					System.out.println("Processing your request, please wait...");
+					CurrencyType currency_in = CurrencyType.valueOf(type_str);
 					
-					//begin to summarize the inputs for message module
-					byte[] msg_byte = ClientMarshal.marshal(name, password, type_str, deposit_amount);
+					System.out.println(name == "john");
+					System.out.println(password == "114514");
 					
-					client_comm.clientSend(msg_byte);
+					mgr.createAccount(name, password, currency_in, deposit_amount);
 					
 					
 					break; 
@@ -141,10 +138,10 @@ public class distributedBank extends Thread{
 					
 					System.out.println("Processing your request, please wait...");
 					
-					//begin to summarize the inputs for message module
-					byte[] msg_byte = ClientMarshal.marshal(name, account_number, password);
+					System.out.println(name == "john");
+					System.out.println(password == "114514");
 					
-					client_comm.clientSend(msg_byte);
+					mgr.closeAccount(account_number, name, password);
 					
 					break;
 										
@@ -242,7 +239,6 @@ public class distributedBank extends Thread{
 					while(true) {
 						System.out.println("Please input the amount you want to transfer:");
 						transfer_amount = scanner.nextDouble();
-						scanner.nextLine();
 						if(transfer_amount <= 0) {
 							System.out.println("You must provide a transfer amount > 0");
 						}
@@ -337,21 +333,4 @@ public class distributedBank extends Thread{
 		
 		
 	}
-	
-	public void run() {
-		ClientComm client_comm;
-		try {
-			client_comm = ClientComm.getClientComm();
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();return;
-		}
-		try {
-			client_comm.clientListen();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 }
