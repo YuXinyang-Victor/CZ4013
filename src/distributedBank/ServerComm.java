@@ -3,11 +3,8 @@ package distributedBank;
 import utils.LRUCache;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.util.Random;
 import java.util.UUID;
 
 
@@ -19,6 +16,7 @@ public class ServerComm extends ClientComm {
 	InetAddress client_address;
 	int client_port;
 	byte[] receive;
+	boolean atMostOnce;
 
 	private final LRUCache<UUID, DatagramPacket> messageHistory = new LRUCache<>(50);
 	
@@ -92,35 +90,53 @@ public class ServerComm extends ClientComm {
 		}
 	}
 
-	public DatagramPacket receiveRequest() throws IOException {
+	public DatagramPacket receiveRequest(boolean shouldCache) throws IOException {
 		byte[] dataBuffer = new byte[4096];
 		DatagramPacket msg = new DatagramPacket(dataBuffer, dataBuffer.length);
 
-		this.ds_server.receive(msg);
+		Random random = new Random();
 
-		byte[] data = msg.getData();
-		String message = msg.toString();
 
-		UUID uuId = ServerUnmarshal.getUUID(data);
-		// Check for cached value in case of duplicate message
-		DatagramPacket storedMessage = messageHistory.get(uuId);
+		try{
+			ds_server.receive(msg);
+			if(random.nextInt(10) > 8){
+				System.out.println("Message Lost Simulated");
+			}
+			System.out.println("Success");
+			byte[] data = msg.getData();
+			String message = msg.toString();
 
-		if(storedMessage != null){
-			System.out.println("Duplicated Message Received: " + ServerUnmarshal.getUUID(data));
-			this.ds_server.send(storedMessage);
-			return storedMessage;
+			UUID uuId = ServerUnmarshal.getUUID(data);
+
+
+			// Check for cached value in case of duplicate message
+			if(atMostOnce){
+				DatagramPacket storedMessage = messageHistory.get(uuId);
+				if(storedMessage != null){
+					System.out.println("Duplicated Message Received: " + ServerUnmarshal.getUUID(data));
+					ds_server.send(storedMessage);
+					return null;
+				}
+				if(shouldCache){
+					messageHistory.set(uuId, msg);
+				}
+				else{
+					System.out.println("New Request Received");
+					return msg;
+				}
+			} else {
+				System.out.println("[Server] At Least Once Request");
+				return msg;
+			}
+
+		}
+		catch (SocketTimeoutException exception) {
+			throw exception;
+		}
+		catch (IOException e) {
+			e.printStackTrace();
 		}
 
-		boolean shouldCache = false;
-
-		if(shouldCache){
-			messageHistory.set(uuId, msg);
-		}
-
-		if(message == null){
-			return null;
-		}
 		return msg;
-
 	}
 }

@@ -116,7 +116,7 @@ public class ClientComm {
 		this.setSocketTimeOut(milliSeconds);
 	}
 
-	public String sendMessage(DatagramPacket datagramPacket) throws IOException {
+	public String sendMessage(DatagramPacket datagramPacket, String request_id) throws IOException {
 		boolean wait_for_response = true;
 		int attempt = 0;
 		UUID id = UUID.randomUUID();
@@ -145,11 +145,20 @@ public class ClientComm {
 					while(true){
 						int startTime = (int) System.currentTimeMillis();
 						//TODO: recvfrom()
+						InetAddress client_address = datagramPacket.getAddress();
+						byte[] reply_msg = datagramPacket.getData();
+						String reply_message = ServerUnmarshal.getUUID(reply_msg).toString();
+
 						this.clientListen();
 						//Socket receive data and address
 						int endTime = (int) System.currentTimeMillis();
 
 						//TODO: if address and id is correct, then return reply messgae
+
+						if(client_address.equals("127.0.0.1") && ServerUnmarshal.getUUID(reply_msg).toString().equals(request_id)){
+							return reply_message;
+						}
+
 
 						updated_time_out -= endTime - startTime;
 						if (updated_time_out <= 0) {
@@ -173,7 +182,7 @@ public class ClientComm {
 			this.ds_client.send(datagramPacket);
 		}
 
-
+		return null;
 
 	}
 
