@@ -36,13 +36,15 @@ public class ServerUnmarshal {
 		
 		return field_value;
 	}
-	
+
 	public static UUID getUUID(byte[] message_in) {
 		byte[] uuid_byte = Arrays.copyOfRange(message_in, 4, 40);
 		String uuid_str  = new String(uuid_byte);
 		UUID uuid = UUID.fromString(uuid_str);
+
 		//Since the field for UUID is fixed, just get it from the message and convert to string (or other data type as needed)
 		return uuid; 
 	}
+
 	
 }

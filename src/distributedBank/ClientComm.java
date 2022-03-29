@@ -6,7 +6,19 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+
 import java.nio.ByteBuffer;
+
+import java.util.Scanner;
+import java.util.UUID;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.*;
+
+import java.util.Random;
+
+import utils.Constants;
+
 
 public class ClientComm {
 	// This is the communication module for client
@@ -14,6 +26,8 @@ public class ClientComm {
 	DatagramSocket ds_client;
 	InetAddress ip;
 	byte[] receive;
+
+
 	
 	public static ClientComm getClientComm() throws SocketException {
 		if (client_comm == null) {
@@ -23,13 +37,18 @@ public class ClientComm {
 		return client_comm;
 	}
 	
-	private ClientComm() throws SocketException {
+	public ClientComm() throws SocketException {
 		receive = new byte[65535];
 		DatagramSocket ds = new DatagramSocket(2022);
 		
 		try {
 			String ip_str = "127.0.0.1";
 			ip = InetAddress.getByName(ip_str);
+
+			//add timeout for retransmitting a message
+			ds.setSoTimeout(Constants.TIMEOUT_MILLISECONDS);
+
+
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -38,9 +57,12 @@ public class ClientComm {
 	}
 		
 	
-	public void clientSend(byte[] marshalled) throws IOException {
+	public void clientSend(UUID id, byte[] marshalled) throws IOException {
+		System.out.println("[Client] The request ID is: " + id.toString());
+
 		byte[] buffer = marshalled;
 		//change here for stub testing
+		//TODO: add UUID id into marshall method
 		
 		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2023);
 		ds_client.send(dp_send);
@@ -84,11 +106,79 @@ public class ClientComm {
 			
 			receive = new byte[65535];
 			
-			
-			
-			
 		}
+
+
 	}
+
+	// add setSocketTimeOut method for timeOut change
+	public void setSocketTimeOut(int milliSeconds) throws SocketException {
+		this.setSocketTimeOut(milliSeconds);
+	}
+
+	public String sendMessage(DatagramPacket datagramPacket) throws IOException {
+		boolean wait_for_response = true;
+		int attempt = 0;
+		UUID id = UUID.randomUUID();
+		int time_out = Constants.TIMEOUT_MILLISECONDS;
+
+		Random rand = new Random();
+		int n = rand.nextInt(9);
+		//use a random number to determine whether it should be actually sent out
+
+
+		if (wait_for_response) {
+			while(attempt <= Constants.MAX_ATTEMPTS){
+				this.setSocketTimeOut(time_out);
+				attempt += 1;
+
+				try {
+					if (n != 0) {
+						//TODO: socket send msg to
+						ds_client.send(datagramPacket);
+					} else{
+						System.out.println("Packet Loss");
+					}
+
+					int updated_time_out = time_out;
+
+					while(true){
+						int startTime = (int) System.currentTimeMillis();
+						//TODO: recvfrom()
+						this.clientListen();
+						//Socket receive data and address
+						int endTime = (int) System.currentTimeMillis();
+
+						//TODO: if address and id is correct, then return reply messgae
+
+						updated_time_out -= endTime - startTime;
+						if (updated_time_out <= 0) {
+							System.out.println("No Message Received From Server In " + time_out +
+									"Seconds. Resending...");
+						}
+						this.ds_client.setSoTimeout(updated_time_out);
+
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			System.out.println("Maximum " + Constants.MAX_ATTEMPTS + "Attempts Reached.");
+			System.out.println("Please Check Your Internet Connection and Try Again Later.");
+
+		}
+		else {
+			this.ds_client.send(datagramPacket);
+		}
+
+
+
+	}
+
+
+
 	
 
 }
