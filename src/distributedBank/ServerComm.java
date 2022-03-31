@@ -9,7 +9,7 @@ import java.util.UUID;
 
 
 //Singleton Class
-public class ServerComm extends ClientComm {
+public class ServerComm  {
 	//This is the communication module for server
 	private static ServerComm server_comm = null;
 	DatagramSocket ds_server;
@@ -104,7 +104,7 @@ public class ServerComm extends ClientComm {
 			}
 			System.out.println("Success");
 			byte[] data = msg.getData();
-			String message = msg.toString();
+			//String message = msg.toString();
 
 			UUID uuId = ServerUnmarshal.getUUID(data);
 
@@ -117,9 +117,9 @@ public class ServerComm extends ClientComm {
 					ds_server.send(storedMessage);
 					return null;
 				}
-				if(shouldCache){
-					messageHistory.set(uuId, msg);
-				}
+				//if(shouldCache){
+					//messageHistory.set(uuId, msg);
+				//} //unused? 
 				else{
 					System.out.println("New Request Received");
 					return msg;

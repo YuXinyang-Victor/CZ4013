@@ -37,16 +37,16 @@ public class ClientComm {
 		return client_comm;
 	}
 	
-	public ClientComm() throws SocketException {
+	private ClientComm() throws SocketException {
 		receive = new byte[65535];
-		DatagramSocket ds = new DatagramSocket(2022);
+		DatagramSocket ds = new DatagramSocket(2024);
 		
 		try {
 			String ip_str = "127.0.0.1";
 			ip = InetAddress.getByName(ip_str);
 
 			//add timeout for retransmitting a message
-			ds.setSoTimeout(Constants.TIMEOUT_MILLISECONDS);
+			//ds.setSoTimeout(Constants.TIMEOUT_MILLISECONDS);
 
 
 		} catch (UnknownHostException e) {
@@ -57,8 +57,8 @@ public class ClientComm {
 	}
 		
 	
-	public void clientSend(UUID id, byte[] marshalled) throws IOException {
-		System.out.println("[Client] The request ID is: " + id.toString());
+	public void clientSend(byte[] marshalled) throws IOException {
+		//System.out.println("[Client] The request ID is: " + id.toString());
 
 		byte[] buffer = marshalled;
 		//change here for stub testing
@@ -66,6 +66,16 @@ public class ClientComm {
 		
 		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2023);
 		ds_client.send(dp_send);
+		
+		//call At least once driver, pass datagram packet, uuid, etc. 
+		//driver gets message from client listen when a message from server is received
+		//if server reply uuid (same as the message it is replying to) equals this.uuid, then nothing happens (success)
+		//if server no reply in X seconds, then retransmit (call clientsend again)(retransmit counter - 1)
+		//if retransmit counter is drained, then display network error
+	}
+	
+	private void driver() {
+	
 	}
 	
 	public void clientRegister() throws IOException {
@@ -95,11 +105,13 @@ public class ClientComm {
 		//This method should be called immediately after construction of client comm module
 		
 		DatagramPacket dp_receive = null;
+		System.out.println("called");
 		
 		while (true) {
 			dp_receive = new DatagramPacket(receive, receive.length);
 			
 			ds_client.receive(dp_receive);
+			//call driver
 			ClientUnmarshal unpacker = new ClientUnmarshal();
 			String msg = unpacker.unmarshal(receive);  //Let server convert everything to string message then send. client just need to display after unmarshaling
 			distributedBank.displayMsg(msg); 
@@ -129,7 +141,9 @@ public class ClientComm {
 
 		if (wait_for_response) {
 			while(attempt <= Constants.MAX_ATTEMPTS){
+				System.out.println("before");
 				this.setSocketTimeOut(time_out);
+				System.out.println("after");
 				attempt += 1;
 
 				try {
@@ -155,8 +169,11 @@ public class ClientComm {
 
 						//TODO: if address and id is correct, then return reply messgae
 
-						if(client_address.equals("127.0.0.1") && ServerUnmarshal.getUUID(reply_msg).toString().equals(request_id)){
-							return reply_message;
+						if(client_address.equals(InetAddress.getByName("127.0.0.1")) && ServerUnmarshal.getUUID(reply_msg).toString().equals(request_id)){
+							String msg_str = ClientUnmarshal.unmarshal(reply_msg);
+							distributedBank.displayMsg(msg_str);
+							
+							//return reply_message;
 						}
 
 
@@ -185,6 +202,8 @@ public class ClientComm {
 		return null;
 
 	}
+	
+	//get uuid from datagram packet 
 
 
 

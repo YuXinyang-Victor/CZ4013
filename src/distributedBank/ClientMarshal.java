@@ -1,5 +1,8 @@
 package distributedBank;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,7 +51,7 @@ public class ClientMarshal {
 	}
 	
 	//We will be using polymorphism to deal with different marshaling requirements
-	public static byte[] marshal(String name, String password, String currency, double amount) {
+	public static byte[] marshal(String name, String password, String currency, double amount) throws IOException {
 		int field_count = 4;
 		int opcode = 1;
 		int len_opcode = 4;
@@ -121,6 +124,14 @@ public class ClientMarshal {
 		byte[] final_message = buf.array();
 		buf.clear();
 		System.out.println("out");
+		
+		//testing
+		byte[] buffer = final_message;
+		String ip_str = "127.0.0.1";
+		InetAddress ip = InetAddress.getByName(ip_str);
+		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2023);
+		ClientComm client_comm = ClientComm.getClientComm();
+		client_comm.sendMessage(dp_send, new String(uuid));
 		return final_message;
 		
 		
