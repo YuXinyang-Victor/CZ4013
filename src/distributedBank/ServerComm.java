@@ -9,7 +9,7 @@ import java.util.UUID;
 
 
 //Singleton Class
-public class ServerComm extends ClientComm {
+public class ServerComm  {
 	//This is the communication module for server
 	private static ServerComm server_comm = null;
 	DatagramSocket ds_server;
@@ -29,7 +29,7 @@ public class ServerComm extends ClientComm {
 		return server_comm;
 	}
 	
-	private ServerComm() throws SocketException {
+	public ServerComm() throws SocketException {
 		receive = new byte[65535];
 		DatagramSocket ds = new DatagramSocket(2023);
 		
