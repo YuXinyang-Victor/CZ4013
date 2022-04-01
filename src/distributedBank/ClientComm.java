@@ -66,7 +66,8 @@ public class ClientComm {
 		
 		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2023);
 		ds_client.send(dp_send);
-		
+
+		//TODO: before call AtLeastOnceDrive, it should know and pass the previous request_id
 		//call At least once driver, pass datagram packet, uuid, etc. 
 		//driver gets message from client listen when a message from server is received
 		//if server reply uuid (same as the message it is replying to) equals this.uuid, then nothing happens (success)
@@ -74,9 +75,7 @@ public class ClientComm {
 		//if retransmit counter is drained, then display network error
 	}
 	
-	private void driver() {
-	
-	}
+
 	
 	public void clientRegister() throws IOException {
 		int opcode = 0;
@@ -128,85 +127,64 @@ public class ClientComm {
 		this.setSocketTimeOut(milliSeconds);
 	}
 
-	public String sendMessage(DatagramPacket datagramPacket, String request_id) throws IOException {
+	private void AtLeastOnceDriver(DatagramPacket initialPacket) throws IOException{
 		boolean wait_for_response = true;
 		int attempt = 0;
-		UUID id = UUID.randomUUID();
 		int time_out = Constants.TIMEOUT_MILLISECONDS;
+		int updated_time_out = time_out;
 
 		Random rand = new Random();
-		int n = rand.nextInt(9);
+
 		//use a random number to determine whether it should be actually sent out
 
-
-		if (wait_for_response) {
-			while(attempt <= Constants.MAX_ATTEMPTS){
-				System.out.println("before");
-				this.setSocketTimeOut(time_out);
-				System.out.println("after");
-				attempt += 1;
+		if(wait_for_response){
+			while(attempt <= Constants.MAX_ATTEMPTS) {
+				ds_client.setSoTimeout(time_out);
 
 				try {
-					if (n != 0) {
-						//TODO: socket send msg to
-						ds_client.send(datagramPacket);
-					} else{
+					if (rand.nextInt(9) != 0) {
+						ds_client.send(initialPacket);
+					} else {
 						System.out.println("Packet Loss");
+						continue;
 					}
 
-					int updated_time_out = time_out;
+					byte[] receive = new byte[65535];
+					DatagramPacket ack_packet = new DatagramPacket(receive, receive.length);
 
-					while(true){
-						int startTime = (int) System.currentTimeMillis();
-						//TODO: recvfrom()
-						InetAddress client_address = datagramPacket.getAddress();
-						byte[] reply_msg = datagramPacket.getData();
-						String reply_message = ServerUnmarshal.getUUID(reply_msg).toString();
-
-						this.clientListen();
-						//Socket receive data and address
-						int endTime = (int) System.currentTimeMillis();
-
-						//TODO: if address and id is correct, then return reply messgae
-
-						if(client_address.equals(InetAddress.getByName("127.0.0.1")) && ServerUnmarshal.getUUID(reply_msg).toString().equals(request_id)){
-							String msg_str = ClientUnmarshal.unmarshal(reply_msg);
-							distributedBank.displayMsg(msg_str);
-							
-							//return reply_message;
-						}
-
-
-						updated_time_out -= endTime - startTime;
-						if (updated_time_out <= 0) {
-							System.out.println("No Message Received From Server In " + time_out +
-									"Seconds. Resending...");
-						}
-						this.ds_client.setSoTimeout(updated_time_out);
-
+					int startTime = (int) System.currentTimeMillis();
+					//simulate ack_packet loss
+					if (rand.nextInt(9) != 5){
+						ds_client.receive(ack_packet);
 					}
+					int endTime = (int) System.currentTimeMillis();
 
-				} catch (Exception e) {
+					updated_time_out -= endTime - startTime;
+					//keep updating timeout duration
+					if (updated_time_out <= 0) {
+						System.out.println("No Message Received From Server In " + updated_time_out +
+								"Seconds. Resending...");
+					}
+					ds_client.setSoTimeout(updated_time_out);
+
+
+				} catch (Exception e){
 					e.printStackTrace();
 				}
-			}
 
-			System.out.println("Maximum " + Constants.MAX_ATTEMPTS + "Attempts Reached.");
-			System.out.println("Please Check Your Internet Connection and Try Again Later.");
+				attempt += 1;
+			}
+			if (attempt == Constants.MAX_ATTEMPTS){
+				System.out.println("Maximum " + Constants.MAX_ATTEMPTS + "Attempts Reached.");
+				System.out.println("Please Check Your Internet Connection and Try Again Later.");
+			}
 
 		}
 		else {
-			this.ds_client.send(datagramPacket);
+			ds_client.send(initialPacket);
 		}
 
-		return null;
-
 	}
-	
-	//get uuid from datagram packet 
 
-
-
-	
 
 }
