@@ -4,6 +4,7 @@ import utils.LRUCache;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.UUID;
 
@@ -16,9 +17,11 @@ public class ServerComm  {
 	InetAddress client_address;
 	int client_port;
 	byte[] receive;
-	boolean atMostOnce;
+	boolean atMostOnce = true;
+	
+	static int uuid_length = 36;
 
-	private final LRUCache<UUID, DatagramPacket> messageHistory = new LRUCache<>(50);
+	private final LRUCache<UUID, byte[]> message_history = new LRUCache<>(50);
 	
 	public static ServerComm getServerComm() throws SocketException {
 		if (server_comm == null) {
@@ -37,8 +40,24 @@ public class ServerComm  {
 		ds_server = ds;
 	}
 	
-	public void serverSend(byte[] marshalled) throws IOException {
-		byte[] buffer = marshalled;
+	public void serverSend(byte[] marshalled, boolean contain_uuid) throws IOException {
+		ByteBuffer byte_buffer = ByteBuffer.allocate(marshalled.length + 4);
+		if(contain_uuid) {
+			ByteBuffer c = ByteBuffer.allocate(4);
+			c.putInt(1);
+			byte[] indicator = c.array();
+			byte_buffer.put(indicator);
+			byte_buffer.put(marshalled);
+		}
+		else {
+			ByteBuffer c = ByteBuffer.allocate(4);
+			c.putInt(0);
+			byte[] indicator = c.array();
+			byte_buffer.put(indicator);
+			byte_buffer.put(marshalled);
+		}
+		
+		byte[] buffer = byte_buffer.array();
 		//change here for stub testing
 		
 		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, client_address, client_port);
@@ -46,11 +65,29 @@ public class ServerComm  {
 	}
 	
 	public void serverSend(byte[] marshalled, InetAddress ip, int port) throws IOException {
+		ByteBuffer byte_buffer = ByteBuffer.allocate(marshalled.length + 4);
+		ByteBuffer c = ByteBuffer.allocate(4);
+		c.putInt(1);
+		byte[] indicator = c.array();
+		byte_buffer.put(indicator);
+		byte_buffer.put(marshalled);
+		
 		byte[] buffer = marshalled;
 		//change here for stub testing
 		
 		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, port);
 		ds_server.send(dp_send);
+	}
+	
+	public static byte[] serverAddUUID(byte[] msg, byte[] uuid) {
+		int buf_len = msg.length + uuid_length;
+		ByteBuffer buf = ByteBuffer.allocate(buf_len);
+		buf.put(uuid);
+		buf.put(msg);
+		byte[] message = buf.array();
+		
+		return message;
+		
 	}
 	
 	//serverListen: call unmarshaling, categorize the information received, and call manager to do the job according to opcode
@@ -90,53 +127,31 @@ public class ServerComm  {
 		}
 	}
 
-	public DatagramPacket receiveRequest(boolean shouldCache) throws IOException {
-		byte[] dataBuffer = new byte[4096];
-		DatagramPacket msg = new DatagramPacket(dataBuffer, dataBuffer.length);
-
-		Random random = new Random();
-
-
-		try{
-			ds_server.receive(msg);
-			if(random.nextInt(10) > 8){
-				System.out.println("Message Lost Simulated");
+	public boolean invoSemProcess(byte[] msg) throws IOException {
+		UUID uuid = ServerUnmarshal.getUUID(msg); //incoming msg contains uuid and so do the messages cached. Difference: incoming - client msg format. cached - reply format
+		// Check for cached value in case of duplicate message
+		if(atMostOnce) {
+			if(message_history.get(uuid) == null) {
+				//this message has not been stored. Store the UUID - message pair
+				System.out.println("New Reply Should be Cached");
+				//message_history.set(uuid, msg);
+				return true; //true gives green light for operations to continue
 			}
-			System.out.println("Success");
-			byte[] data = msg.getData();
-			//String message = msg.toString();
-
-			UUID uuId = ServerUnmarshal.getUUID(data);
-
-
-			// Check for cached value in case of duplicate message
-			if(atMostOnce){
-				DatagramPacket storedMessage = messageHistory.get(uuId);
-				if(storedMessage != null){
-					System.out.println("Duplicated Message Received: " + ServerUnmarshal.getUUID(data));
-					ds_server.send(storedMessage);
-					return null;
-				}
-				//if(shouldCache){
-					//messageHistory.set(uuId, msg);
-				//} //unused? 
-				else{
-					System.out.println("New Request Received");
-					return msg;
-				}
-			} else {
-				System.out.println("[Server] At Least Once Request");
-				return msg;
+			else {
+				//this message exists. Trigger "send reply"
+				byte[] cached_msg = message_history.get(uuid);
+				System.out.println("Duplicate request. Sending cached reply");
+				serverSend(cached_msg, true);
+				return false; //false denotes that the operation should not continue
 			}
-
 		}
-		catch (SocketTimeoutException exception) {
-			throw exception;
+		else {
+			//at least once invocation semantics executed, so operation must be carried out
+			return true; //operation to be carried out no matter if it is duplicate
 		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return msg;
+	}
+	
+	public void addMsgToCache(byte[] msg, UUID uuid) {
+		message_history.set(uuid, msg);
 	}
 }

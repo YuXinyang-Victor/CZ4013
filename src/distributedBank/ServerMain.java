@@ -16,7 +16,7 @@ public class ServerMain {
 		//initialize server communication module
 		ServerComm server_comm = ServerComm.getServerComm();
 		server_comm.serverListen();
-		//initialize serveraccountmanager
+		
 	}
 	
 	public static void mainHandler(byte[] message_in) throws IOException {
@@ -24,6 +24,10 @@ public class ServerMain {
 		UUID uuid = ServerUnmarshal.getUUID(message_in);
 		
 		//check uuid and handle with appropriate invocation semantics
+		ServerComm server_comm = ServerComm.getServerComm();
+		boolean should_proceed = server_comm.invoSemProcess(message_in);
+		if(!should_proceed) return;
+		
 		
 		//handle according to opcode
 		String message = new String();
@@ -50,9 +54,13 @@ public class ServerMain {
 			default: break;
 		}
 		
-		ServerComm server_comm = ServerComm.getServerComm();
+		
 		byte[] msg_byte = message.getBytes();
-		server_comm.serverSend(msg_byte);
+		byte[] uuid_byte = uuid.toString().getBytes(); //consider UTF-8? Unicode? on different machines?
+		byte[] reply = ServerComm.serverAddUUID(msg_byte, uuid_byte);
+		server_comm.serverSend(reply, true);
+		
+		server_comm.addMsgToCache(reply, uuid);
 		
 		
 	}
@@ -326,7 +334,7 @@ public class ServerMain {
 	public static void sendError(String err_msg) throws IOException {
 		ServerComm server_comm = ServerComm.getServerComm();
 		byte[] msg_byte = err_msg.getBytes();
-		server_comm.serverSend(msg_byte);
+		server_comm.serverSend(msg_byte, false);
 	}
 	
 	public static void updateHandler(Account acc) throws IOException {

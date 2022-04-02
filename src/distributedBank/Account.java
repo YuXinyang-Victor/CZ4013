@@ -12,7 +12,7 @@ public class Account {
 	
 	public Account(int accNumber_in, String name_in, String passwordHash_in, CurrencyType currency_in, double initAccBalance_in) { 	//generator for class, used for opening accounts
 		// assign accNumber line
-		accNumber_in = accNumber; 
+		accNumber = accNumber_in; 
 		
 		name = name_in; 
 		

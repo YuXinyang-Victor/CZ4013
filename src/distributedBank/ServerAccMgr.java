@@ -29,18 +29,15 @@ public class ServerAccMgr {
 	//acc creation
 	public int createAccount(String name_in, String passwordHash_in, CurrencyType currency_in, Double initAccBalance_in) {
 		Integer account_number = next_acc_number; 
-		next_acc_number += 1; //as early as possible to reserve the number
-		account_number = acc_list.size();
 		Account new_acc = new Account(account_number.intValue(), name_in, passwordHash_in, currency_in, initAccBalance_in);//call the constructor to create a new object
 		acc_list.put(account_number, new_acc); //reference to the object from the acclist 
-		//notifyAllObservers(account_number.intValue());
-		System.out.println(acc_list);
 		try {
 			startCallback(account_number.intValue());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		next_acc_number += 1; 
 		return account_number; 
 	}
 	
@@ -48,9 +45,7 @@ public class ServerAccMgr {
 	//acc closing (including pwd check)
 	public boolean closeAccount(int account_number, String name_in, String passwordHash_in) throws IOException {
 		boolean isValid = checkProvidedInfo(account_number, name_in, passwordHash_in); 
-		System.out.println("checking if details are valid");
 		if (isValid) {
-			System.out.println("details are valid");
 			acc_list.remove(Integer.valueOf(account_number));
 			try {
 				startCallback(account_number);
@@ -62,7 +57,6 @@ public class ServerAccMgr {
 		}
 		else {
 			//trigger wrong name pwd acctno combination notification
-			System.out.println("details are not valid");
 			sendErrorMessage(1);
 			return false; 
 		}
@@ -74,7 +68,7 @@ public class ServerAccMgr {
 		if (to_be_checked == null) {
 			return false; 
 		}
-		return ((account_number == to_be_checked.getAccNumber()) && (name_in.equals(to_be_checked.getName())) && (passwordHash_in.equals(to_be_checked.getHash())) );
+		return ((name_in.equals(to_be_checked.getName())) && (passwordHash_in.equals(to_be_checked.getHash())) );
 	}
 	
 	public Double updateAccBalance(int account_number, String name_in, String passwordHash_in, Double offset) throws IOException {

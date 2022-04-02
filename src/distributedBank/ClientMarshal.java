@@ -84,7 +84,7 @@ public class ClientMarshal {
 			b_arr[i] = ByteBuffer.allocate(4);
 			byte[] length_byte; 
 			length_int = iter_par.next().length;
-			System.out.println("This field has length:" + length_int);
+			
 			length_sum += length_int;
 			b_arr[i].putInt(length_int);
 			length_byte = b_arr[i].array();
@@ -95,10 +95,7 @@ public class ClientMarshal {
 			
 		} //calculates the length for each field in order and store in a byte array
 		
-		ByteBuffer test = ByteBuffer.wrap(length_list.get(0));
-		test.rewind();
-		int test_int = test.getInt();
-		System.out.println("length0: " + test_int);
+		
 		
 		ByteBuffer c = ByteBuffer.allocate(4);
 		c.putInt(opcode);
@@ -123,15 +120,15 @@ public class ClientMarshal {
 		
 		byte[] final_message = buf.array();
 		buf.clear();
-		System.out.println("out");
+		
 		
 		//testing
-		byte[] buffer = final_message;
-		String ip_str = "127.0.0.1";
-		InetAddress ip = InetAddress.getByName(ip_str);
-		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2023);
-		ClientComm client_comm = ClientComm.getClientComm();
-		client_comm.sendMessage(dp_send, new String(uuid));
+		//byte[] buffer = final_message;
+		//String ip_str = "127.0.0.1";
+		//InetAddress ip = InetAddress.getByName(ip_str);
+		//DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, ip, 2023);
+		//ClientComm client_comm = ClientComm.getClientComm();
+		//client_comm.sendMessage(dp_send, new String(uuid));
 		return final_message;
 		
 		
@@ -174,21 +171,18 @@ public class ClientMarshal {
 			b_arr[i] = ByteBuffer.allocate(4);
 			byte[] length_byte; 
 			length_int = iter_par.next().length;
-			System.out.println("This field has length:" + length_int);
+			
 			length_sum += length_int;
 			b_arr[i].putInt(length_int);
 			length_byte = b_arr[i].array();
 			length_list.add(length_byte);
-			//b.clear();
+			
 			length_int = 0;
 			i++;
 			
 		} //calculates the length for each field in order and store in a byte array
 		
-		ByteBuffer test = ByteBuffer.wrap(length_list.get(0));
-		test.rewind();
-		int test_int = test.getInt();
-		System.out.println("length0: " + test_int);
+		
 		
 		ByteBuffer c = ByteBuffer.allocate(4);
 		c.putInt(opcode);
@@ -213,7 +207,7 @@ public class ClientMarshal {
 		
 		byte[] final_message = buf.array();
 		buf.clear();
-		System.out.println("out");
+		
 		return final_message;
 	}
 	
@@ -250,21 +244,18 @@ public class ClientMarshal {
 			b_arr[i] = ByteBuffer.allocate(4);
 			byte[] length_byte; 
 			length_int = iter_par.next().length;
-			System.out.println("This field has length:" + length_int);
+			
 			length_sum += length_int;
 			b_arr[i].putInt(length_int);
 			length_byte = b_arr[i].array();
 			length_list.add(length_byte);
-			//b.clear();
+			
 			length_int = 0;
 			i++;
 			
 		} //calculates the length for each field in order and store in a byte array
 		
-		ByteBuffer test = ByteBuffer.wrap(length_list.get(0));
-		test.rewind();
-		int test_int = test.getInt();
-		System.out.println("length0: " + test_int);
+		
 		
 		ByteBuffer c = ByteBuffer.allocate(4);
 		c.putInt(opcode);
@@ -289,7 +280,7 @@ public class ClientMarshal {
 		
 		byte[] final_message = buf.array();
 		buf.clear();
-		System.out.println("out");
+		
 		return final_message;
 	}
 	
@@ -330,7 +321,7 @@ public class ClientMarshal {
 			b_arr[i] = ByteBuffer.allocate(4);
 			byte[] length_byte; 
 			length_int = iter_par.next().length;
-			System.out.println("This field has length:" + length_int);
+			
 			length_sum += length_int;
 			b_arr[i].putInt(length_int);
 			length_byte = b_arr[i].array();
@@ -341,10 +332,7 @@ public class ClientMarshal {
 			
 		} //calculates the length for each field in order and store in a byte array
 		
-		ByteBuffer test = ByteBuffer.wrap(length_list.get(0));
-		test.rewind();
-		int test_int = test.getInt();
-		System.out.println("length0: " + test_int);
+		
 		
 		ByteBuffer c = ByteBuffer.allocate(4);
 		c.putInt(opcode);
@@ -369,7 +357,7 @@ public class ClientMarshal {
 		
 		byte[] final_message = buf.array();
 		buf.clear();
-		System.out.println("out");
+		
 		return final_message;
 	}
 	
@@ -406,7 +394,7 @@ public class ClientMarshal {
 			b_arr[i] = ByteBuffer.allocate(4);
 			byte[] length_byte; 
 			length_int = iter_par.next().length;
-			System.out.println("This field has length:" + length_int);
+			
 			length_sum += length_int;
 			b_arr[i].putInt(length_int);
 			length_byte = b_arr[i].array();
@@ -417,10 +405,7 @@ public class ClientMarshal {
 			
 		} //calculates the length for each field in order and store in a byte array
 		
-		ByteBuffer test = ByteBuffer.wrap(length_list.get(0));
-		test.rewind();
-		int test_int = test.getInt();
-		System.out.println("length0: " + test_int);
+		
 		
 		ByteBuffer c = ByteBuffer.allocate(4);
 		c.putInt(opcode);
@@ -445,7 +430,7 @@ public class ClientMarshal {
 		
 		byte[] final_message = buf.array();
 		buf.clear();
-		System.out.println("out");
+		
 		return final_message;
 	}
 

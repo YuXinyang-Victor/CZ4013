@@ -30,6 +30,7 @@ public class distributedBank extends Thread{
 	public static void main(String[] args) throws IOException {
 		Scanner scanner = new Scanner(System.in);
 		ClientComm client_comm = ClientComm.getClientComm();
+		SendDriver send_driver = SendDriver.getDriver();
 		//client_comm.clientListen();
 		
 		distributedBank thread = new distributedBank();
@@ -115,8 +116,8 @@ public class distributedBank extends Thread{
 					//begin to summarize the inputs for message module
 					byte[] msg_byte = ClientMarshal.marshal(name, password, type_str, deposit_amount);
 					
+					//send_driver.send(msg_byte);  This line is for simulation retransmission
 					client_comm.clientSend(msg_byte);
-					
 					
 					break; 
 					
@@ -144,6 +145,7 @@ public class distributedBank extends Thread{
 					//begin to summarize the inputs for message module
 					byte[] msg_byte = ClientMarshal.marshal(name, account_number, password);
 					
+					//send_driver.send(msg_byte);  This line is for simulation retransmission
 					client_comm.clientSend(msg_byte);
 					
 					break;
@@ -181,6 +183,7 @@ public class distributedBank extends Thread{
 					//begin to summarize the inputs for message module
 					byte[] msg_byte = ClientMarshal.marshal(name, account_number, password, deposit_amount);
 					
+					//send_driver.send(msg_byte);  This line is for simulation retransmission
 					client_comm.clientSend(msg_byte);
 					
 					break;
@@ -217,6 +220,7 @@ public class distributedBank extends Thread{
 					//begin to summarize the inputs for message module
 					byte[] msg_byte = ClientMarshal.marshal(name, account_number, password, -withdraw_amount); 
 					
+					//send_driver.send(msg_byte);  This line is for simulation retransmission
 					client_comm.clientSend(msg_byte);
 					
 					break;
@@ -262,6 +266,7 @@ public class distributedBank extends Thread{
 					//begin to summarize the inputs for message module
 					byte[] msg_byte = ClientMarshal.marshal(from_name, from_account_number, password, transfer_amount, to_name, to_account_number);
 					
+					//send_driver.send(msg_byte);  This line is for simulation retransmission
 					client_comm.clientSend(msg_byte);
 					
 					break;
@@ -309,6 +314,7 @@ public class distributedBank extends Thread{
 					//begin to summarize the inputs for message module
 					byte[] msg_byte = ClientMarshal.marshal(name, account_number, password, type_str);
 					
+					//send_driver.send(msg_byte);  This line is for simulation retransmission
 					client_comm.clientSend(msg_byte);
 					
 					break;
