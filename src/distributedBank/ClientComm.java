@@ -101,18 +101,20 @@ public class ClientComm {
 			
 			ds_client.receive(dp_receive);
 			
+			//remove trailing emty bytes
+			byte[] received = RemoveTrail.removeTrail(receive); 
 			
 			//peek if there is uuid
-			boolean have_uuid = ClientUnmarshal.haveUUID(receive);
+			boolean have_uuid = ClientUnmarshal.haveUUID(received);
 			
 			
-			//call driver
+			//call driver, for invocation semantics test only
 			
-			if(have_uuid) {
-				SendDriver send_driver = SendDriver.getDriver();
-				send_driver.updateReceiveStatus(receive);
-			}
-			String msg = ClientUnmarshal.unmarshal(receive);  //Let server convert everything to string message then send. client just need to display after unmarshaling
+			//if(have_uuid) {
+				//SendDriver send_driver = SendDriver.getDriver();
+				//send_driver.updateReceiveStatus(received);
+			//}
+			String msg = ClientUnmarshal.unmarshal(received);  //Let server convert everything to string message then send. client just need to display after unmarshaling
 			distributedBank.displayMsg(msg); 
 			
 			receive = new byte[65535];

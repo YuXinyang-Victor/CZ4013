@@ -118,7 +118,7 @@ public class ServerMain {
 		ServerAccMgr account_manager = ServerAccMgr.getManager();
 		
 		int account_number = account_manager.createAccount(name, password, currency_type, amount);
-		String message = "Your account has been created with account number" + Integer.toString(account_number);
+		String message = "Your account has been created with account number " + Integer.toString(account_number);
 		System.out.println(message);
 		
 		return message;
@@ -209,7 +209,7 @@ public class ServerMain {
 		}
 		String message;
 		if (new_balance != null) {
-			message = "Your new balance is" + new_balance.toString();
+			message = "Your new balance is " + new_balance.toString();
 		}
 		else {message = "Please check the details you have provided";}
 		System.out.println(message);
@@ -269,7 +269,7 @@ public class ServerMain {
 		}
 		String message;
 		if (new_balance != null) {
-			message = "Transfer success. Your new balance is" + new_balance.toString();
+			message = "Transfer success. Your new balance is " + new_balance.toString();
 		}
 		else {message = "Please check the details you have provided. Notice that you cannot transfer between account of different currency types.";}
 		System.out.println(message);
