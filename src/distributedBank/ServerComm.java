@@ -119,13 +119,13 @@ public class ServerComm  {
 			ds_server.receive(dp_receive);
 			
 			byte[] received_msg = dp_receive.getData();
-			System.out.println(received_msg);
+			//System.out.println(received_msg);
 			
 			//call request handler from server main
 			
 			//Testing lines
-			String message = new String(received_msg);
-			System.out.println(message);
+			//String message = new String(received_msg);
+			//System.out.println(message);
 			
 			client_address = dp_receive.getAddress();
 			client_port = dp_receive.getPort();
