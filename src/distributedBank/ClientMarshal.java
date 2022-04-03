@@ -363,7 +363,7 @@ public class ClientMarshal {
 	
 	public static byte[] marshal(String name, int account_number, String password, String currency) {
 		int field_count = 4;
-		int opcode = 1;
+		int opcode = 6;
 		int len_opcode = 4;
 		int len_uuid = 36;
 		
