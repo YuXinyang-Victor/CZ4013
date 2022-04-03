@@ -176,4 +176,8 @@ public class ServerComm  {
 	public void addMsgToCache(byte[] msg, UUID uuid) {
 		message_history.set(uuid, msg);
 	}
+	
+	public void setInvoSem(boolean selection) {
+		atMostOnce = selection; 
+	}
 }

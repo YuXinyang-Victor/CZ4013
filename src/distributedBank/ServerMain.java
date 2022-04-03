@@ -3,7 +3,7 @@ package distributedBank;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
-
+import java.util.Scanner;
 import java.util.UUID;
 
 import distributedBank.ServerUnmarshal;
@@ -14,9 +14,38 @@ import distributedBank.ServerUnmarshal;
 public class ServerMain {
 
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
 		//initialize server communication module
 		ServerComm server_comm = ServerComm.getServerComm();
+		
+		//Choose invocation semantics
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Server starting...");
+		System.out.println("Please choose invocation semantics: ");
+		System.out.println("0: At least once");
+		System.out.println("1: At most once");
+		String input = sc.nextLine();
+		
+		try 
+		{ 
+			int choice = Integer.parseInt(input); 
+			switch(choice) {
+			case 0: server_comm.setInvoSem(false); break;
+			case 1: server_comm.setInvoSem(true);  break;
+			default: System.out.println("Illegal input, auto-select at most once");
+			server_comm.setInvoSem(true); break;
+			}
+			
+		}  
+		catch (NumberFormatException e)  
+		{ 
+			System.out.println(input + " is not a valid integer"); 
+			System.out.println("Illegal input, auto-select at most once");
+			server_comm.setInvoSem(true);
+		} 
+		
+		//start listening
+		System.out.println("Start listening...");
 		server_comm.serverListen();
 		
 	}
