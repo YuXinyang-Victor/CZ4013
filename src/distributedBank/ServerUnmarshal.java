@@ -4,6 +4,9 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
 
+/**
+ * Server unmarshal incoming messages from client
+ */
 public class ServerUnmarshal {
 	public static int peekOpcode(byte[] message_in) {
 		byte[] opcode_byte = Arrays.copyOfRange(message_in, 0, 4);

@@ -1,5 +1,8 @@
 package distributedBank;
 
+/**
+ * Convert account currency, own designed for idempotent actions
+ */
 public class CurrencyConverter {
 	CurrencyType original; 
 	CurrencyType current; 

@@ -1,5 +1,8 @@
 package distributedBank;
 
+/**
+ *
+ */
 public class RemoveTrail {
 	public static byte[] removeTrail(byte[] bytes) {
         if (bytes.length == 0) return bytes;

@@ -7,11 +7,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * For server side handles callback clients
+ */
 public class CallbackMgr {
 	private static CallbackMgr callback_mgr = null;
-	HashMap<Integer, ClientInfo> call_list; 
+	HashMap<Integer, ClientInfo> call_list; //create a hashmap for store registered Clients
 	int call_count;
-	long life = 6000000;
+	long life = 6000000;  // this is client monitoring duration
 	
 	public static CallbackMgr getCallbackMgr() {
 		if (callback_mgr == null) {
@@ -36,6 +39,8 @@ public class CallbackMgr {
 		while(client_iter.hasNext()) {
 			Map.Entry curr = (Entry) client_iter.next();
 			Integer key = (Integer) curr.getKey();
+
+			//check existing client duration for monitor update information
 			ClientInfo value = (ClientInfo) curr.getValue();
 			long curr_epoch = System.currentTimeMillis();
 			long init_epoch = value.created_time;
@@ -51,7 +56,7 @@ public class CallbackMgr {
 				}
 			}
 			else {
-				call_list.remove(key);
+				call_list.remove(key);  //if exceeds assigned duration, remove this client from call list
 			}
 		}
 	}

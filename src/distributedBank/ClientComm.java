@@ -19,9 +19,11 @@ import java.util.Random;
 
 import utils.Constants;
 
-
+/**
+ * Communication module for client
+ */
 public class ClientComm {
-	// This is the communication module for client
+
 	private static ClientComm client_comm = null;
 	DatagramSocket ds_client;
 	InetAddress ip;
@@ -45,8 +47,6 @@ public class ClientComm {
 			String ip_str = "127.0.0.1";
 			ip = InetAddress.getByName(ip_str);
 
-
-
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -56,7 +56,6 @@ public class ClientComm {
 		
 	
 	public void clientSend(byte[] marshalled) throws IOException {
-
 
 		byte[] buffer = marshalled;
 
@@ -101,19 +100,22 @@ public class ClientComm {
 			
 			ds_client.receive(dp_receive);
 			
-			//remove trailing emty bytes
+			//remove trailing empty bytes
 			byte[] received = RemoveTrail.removeTrail(receive); 
 			
 			//peek if there is uuid
 			boolean have_uuid = ClientUnmarshal.haveUUID(received);
-			
-			
+
+			/**
+			 * this part is for at-least-once semantic
+			 */
 			//call driver, for invocation semantics test only
 			
 			//if(have_uuid) {
 				//SendDriver send_driver = SendDriver.getDriver();
 				//send_driver.updateReceiveStatus(received);
 			//}
+
 			String msg = ClientUnmarshal.unmarshal(received);  //Let server convert everything to string message then send. client just need to display after unmarshaling
 			distributedBank.displayMsg(msg); 
 			

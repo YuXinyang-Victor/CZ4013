@@ -3,8 +3,9 @@ package distributedBank;
 import java.io.IOException;
 import java.util.HashMap;
 
-//change this class into a singleton class.
-
+/**
+ * Manage account information in server
+ */
 public class ServerAccMgr {
 	
 	private static ServerAccMgr server_account_manager = null;
@@ -40,9 +41,16 @@ public class ServerAccMgr {
 		next_acc_number += 1; 
 		return account_number; 
 	}
-	
-	
-	//acc closing (including pwd check)
+
+	/**
+	 * account closing (including pwd check)
+	 * @param account_number
+	 * @param name_in
+	 * @param passwordHash_in
+	 * @return
+	 * @throws IOException
+	 */
+
 	public boolean closeAccount(int account_number, String name_in, String passwordHash_in) throws IOException {
 		boolean isValid = checkProvidedInfo(account_number, name_in, passwordHash_in); 
 		if (isValid) {
@@ -61,8 +69,14 @@ public class ServerAccMgr {
 			return false; 
 		}
 	}
-	
-	//check provided information and validate action
+
+	/**
+	 * check provided information and validate action
+	 * @param account_number
+	 * @param name_in
+	 * @param passwordHash_in
+	 * @return
+	 */
 	public boolean checkProvidedInfo(int account_number, String name_in, String passwordHash_in) {
 		Account to_be_checked = acc_list.get(Integer.valueOf(account_number)); 
 		if (to_be_checked == null) {
@@ -70,7 +84,16 @@ public class ServerAccMgr {
 		}
 		return ((name_in.equals(to_be_checked.getName())) && (passwordHash_in.equals(to_be_checked.getHash())) );
 	}
-	
+
+	/**
+	 *
+	 * @param account_number
+	 * @param name_in
+	 * @param passwordHash_in
+	 * @param offset
+	 * @return
+	 * @throws IOException
+	 */
 	public Double updateAccBalance(int account_number, String name_in, String passwordHash_in, Double offset) throws IOException {
 		boolean isValid = checkProvidedInfo(account_number, name_in, passwordHash_in); 
 		if (isValid) {
@@ -169,9 +192,12 @@ public class ServerAccMgr {
 			return null; 
 		}
 	}
-	
-	
-	//error handling functions that send a msg to user indicating the type of error encountered
+
+	/**
+	 * error handling functions that send a msg to user indicating the type of error encountered
+	 * @param err_type
+	 * @throws IOException
+	 */
 	public void sendErrorMessage(int err_type) throws IOException {
 		String err_msg = new String();
 		switch(err_type) {
@@ -183,13 +209,14 @@ public class ServerAccMgr {
 		
 		ServerMain.sendError(err_msg);
 	}
-	//wrong name pwd acctno combination notification - 1
-	//not enough balance notification - 2
-	//currency types do not match, transfer not allowed notification - 3
-	//target account not found notification - 4
-	
-	//update callback
-	//triggering function called after any updates to bank accounts (creation, closing, deposit, withdrawal), this function sends out a msg to update observers
+
+	/**
+	 * update callback
+	 * triggering function called after any updates to bank accounts (creation, closing, deposit, withdrawal)
+	 * this function sends out a msg to update observers
+	 * @param acc_number
+	 * @throws IOException
+	 */
 	public void startCallback(int acc_number) throws IOException {
 		Account updated_acc = acc_list.get(acc_number);
 		if (updated_acc == null) {

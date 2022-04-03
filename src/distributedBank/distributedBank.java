@@ -4,7 +4,9 @@ import java.net.SocketException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-//We should do all input validation checkings in this class
+/**
+ * Main UI, client entry
+ */
 
 public class distributedBank extends Thread{
 	

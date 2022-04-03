@@ -8,7 +8,9 @@ import java.util.UUID;
 
 import distributedBank.ServerUnmarshal;
 
-
+/**
+ * Server entry
+ */
 public class ServerMain {
 
 	public static void main(String[] args) throws IOException {
@@ -47,7 +49,7 @@ public class ServerMain {
 		server_comm.serverListen();
 		
 	}
-	
+
 	public static void mainHandler(byte[] message_in) throws IOException {
 		int opcode = ServerUnmarshal.peekOpcode(message_in);
 		UUID uuid = ServerUnmarshal.getUUID(message_in);
@@ -88,13 +90,20 @@ public class ServerMain {
 		byte[] uuid_byte = uuid.toString().getBytes(); //consider UTF-8? Unicode? on different machines?
 		byte[] reply = ServerComm.serverAddUUID(msg_byte, uuid_byte);
 		server_comm.serverSend(reply, true);
-		
+
+		/**
+		 * this is designed for at-most-once semantic.
+		 */
 		server_comm.addMsgToCache(reply, uuid);
 		
 		
 	}
-	
-	//register callback
+
+	/**
+	 * register callback
+	 * @return
+	 * @throws SocketException
+	 */
 	public static String registerHandler() throws SocketException {
 		ServerComm server_comm = ServerComm.getServerComm();
 		InetAddress client_address = server_comm.client_address;
@@ -108,8 +117,12 @@ public class ServerMain {
 		return message;
 		
 	}
-	
-	//account creation
+
+	/**
+	 * account creation
+	 * @param message_in
+	 * @return
+	 */
 	public static String typeOneHandler(byte[] message_in) {
 		//we do not separate this to another class as we want servermain to ideally be the only one to call serveraccmgr
 		
@@ -307,57 +320,57 @@ public class ServerMain {
 	}
 	
 	public static String typeSixHandler(byte[] message_in) throws IOException {
-				//we do not separate this to another class as we want servermain to ideally be the only one to call serveraccmgr
-		
-				//Because of predetermined protocol, server knows that for opcode 6, it is a request for account currency type change
-				//The first field after uuid is going to be name, followed by acc_number, password, and currency
-				
-				System.out.println("type six handler called");
-				int curr_pos = 40;
-				
-				int name_length = ServerUnmarshal.getFieldLength(curr_pos, message_in);
-				curr_pos += 4;
-				String name = ServerUnmarshal.getValue(curr_pos, name_length, message_in);
-				curr_pos += name_length; 
-				
-				int acc_length = ServerUnmarshal.getFieldLength(curr_pos, message_in);
-				curr_pos += 4;
-				String acc = ServerUnmarshal.getValue(curr_pos, acc_length, message_in); 
-				curr_pos += acc_length;
-				
-				int password_length = ServerUnmarshal.getFieldLength(curr_pos, message_in);
-				curr_pos += 4;
-				String password = ServerUnmarshal.getValue(curr_pos, password_length, message_in); 
-				curr_pos += password_length;
-				
-				int currency_length = ServerUnmarshal.getFieldLength(curr_pos, message_in);
-				curr_pos += 4;
-				String currency = ServerUnmarshal.getValue(curr_pos, currency_length, message_in);
-				curr_pos += currency_length;
-				
-				//start converting strings to the correct var type
-				CurrencyType currency_type = CurrencyType.valueOf(currency);
-				int account_number = Integer.valueOf(acc);
-						
-				ServerAccMgr account_manager = ServerAccMgr.getManager();
-				String message = new String(); 
-				
-				boolean status = false;
-				try {
-					status = account_manager.changeAccCurrency(account_number, name, password, currency_type);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if (status) {
-					message = "Your account currency type is successfully changed.";
-				}
-				else {
-					message = "Please check the details you have provided.";
-				}
-				System.out.println(message);
-				
-				return message;
+		//we do not separate this to another class as we want servermain to ideally be the only one to call serveraccmgr
+
+		//Because of predetermined protocol, server knows that for opcode 6, it is a request for account currency type change
+		//The first field after uuid is going to be name, followed by acc_number, password, and currency
+
+		System.out.println("type six handler called");
+		int curr_pos = 40;
+
+		int name_length = ServerUnmarshal.getFieldLength(curr_pos, message_in);
+		curr_pos += 4;
+		String name = ServerUnmarshal.getValue(curr_pos, name_length, message_in);
+		curr_pos += name_length;
+
+		int acc_length = ServerUnmarshal.getFieldLength(curr_pos, message_in);
+		curr_pos += 4;
+		String acc = ServerUnmarshal.getValue(curr_pos, acc_length, message_in);
+		curr_pos += acc_length;
+
+		int password_length = ServerUnmarshal.getFieldLength(curr_pos, message_in);
+		curr_pos += 4;
+		String password = ServerUnmarshal.getValue(curr_pos, password_length, message_in);
+		curr_pos += password_length;
+
+		int currency_length = ServerUnmarshal.getFieldLength(curr_pos, message_in);
+		curr_pos += 4;
+		String currency = ServerUnmarshal.getValue(curr_pos, currency_length, message_in);
+		curr_pos += currency_length;
+
+		//start converting strings to the correct var type
+		CurrencyType currency_type = CurrencyType.valueOf(currency);
+		int account_number = Integer.valueOf(acc);
+
+		ServerAccMgr account_manager = ServerAccMgr.getManager();
+		String message = new String();
+
+		boolean status = false;
+		try {
+			status = account_manager.changeAccCurrency(account_number, name, password, currency_type);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (status) {
+			message = "Your account currency type is successfully changed.";
+		}
+		else {
+			message = "Please check the details you have provided.";
+		}
+		System.out.println(message);
+
+		return message;
 	}
 	
 	public static void sendError(String err_msg) throws IOException {
