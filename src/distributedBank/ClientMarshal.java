@@ -9,7 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-
+/**
+ * Client side to Marshal outcoming messages
+ */
 
 public class ClientMarshal {
 	
@@ -49,8 +51,17 @@ public class ClientMarshal {
 		byte[] uuid_byte = uuid_str.getBytes();
 		return uuid_byte;
 	}
-	
-	//We will be using polymorphism to deal with different marshaling requirements
+
+
+	/**
+	 * We will be using polymorphism to deal with different marshaling requirements
+	 * @param name
+	 * @param password
+	 * @param currency
+	 * @param amount
+	 * @return
+	 * @throws IOException
+	 */
 	public static byte[] marshal(String name, String password, String currency, double amount) throws IOException {
 		int field_count = 4;
 		int opcode = 1;
@@ -130,12 +141,6 @@ public class ClientMarshal {
 		//ClientComm client_comm = ClientComm.getClientComm();
 		//client_comm.sendMessage(dp_send, new String(uuid));
 		return final_message;
-		
-		
-		
-		
-		
-				
 	}
 	
 	public static byte[] marshal(String name, int account_number, String password) {

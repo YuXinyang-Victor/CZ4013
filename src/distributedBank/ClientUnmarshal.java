@@ -4,6 +4,9 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
 
+/**
+ * Client side to unmarshal incoming messages
+ */
 public class ClientUnmarshal {
 	
 	

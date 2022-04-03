@@ -2,11 +2,15 @@ package distributedBank;
 
 import java.net.InetAddress;
 
+/**
+ * Client Information class
+ */
 public class ClientInfo {
 	InetAddress ip; 
 	int port;
 	long created_time;
-	
+
+
 	public ClientInfo(InetAddress ip, int port, long created_time) {
 		this.ip = ip; 
 		this.port = port; 

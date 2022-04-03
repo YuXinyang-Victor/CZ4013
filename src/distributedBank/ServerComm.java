@@ -8,8 +8,9 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.UUID;
 
-
-//Singleton Class
+/**
+ * Communication module for server
+ */
 public class ServerComm  {
 	//This is the communication module for server
 	private static ServerComm server_comm = null;
@@ -20,7 +21,7 @@ public class ServerComm  {
 	boolean atMostOnce = true;
 	
 	static int uuid_length = 36;
-
+	//message cache for duplicate filtering
 	private final LRUCache<UUID, byte[]> message_history = new LRUCache<>(50);
 	
 	public static ServerComm getServerComm() throws SocketException {
@@ -39,7 +40,13 @@ public class ServerComm  {
 		
 		ds_server = ds;
 	}
-	
+
+	/**
+	 * default server send
+	 * @param marshalled
+	 * @param contain_uuid
+	 * @throws IOException
+	 */
 	public void serverSend(byte[] marshalled, boolean contain_uuid) throws IOException {
 		ByteBuffer byte_buffer = ByteBuffer.allocate(marshalled.length + 4);
 		if(contain_uuid) {
@@ -63,7 +70,14 @@ public class ServerComm  {
 		DatagramPacket dp_send = new DatagramPacket(buffer, buffer.length, client_address, client_port);
 		ds_server.send(dp_send);
 	}
-	
+
+	/**
+	 * Server send messages to clients in callback list
+	 * @param marshalled
+	 * @param ip
+	 * @param port
+	 * @throws IOException
+	 */
 	public void serverSend(byte[] marshalled, InetAddress ip, int port) throws IOException {
 		ByteBuffer byte_buffer = ByteBuffer.allocate(marshalled.length + 4);
 		ByteBuffer c = ByteBuffer.allocate(4);
@@ -89,9 +103,11 @@ public class ServerComm  {
 		return message;
 		
 	}
-	
-	//serverListen: call unmarshaling, categorize the information received, and call manager to do the job according to opcode
-	
+
+	/**
+	 * call unmarshaling, categorize the information received, and call manager to do the job according to opcode
+	 * @throws IOException
+	 */
 	public void serverListen() throws IOException {
 		//This method should be called immediately after construction of server module
 		
@@ -127,6 +143,12 @@ public class ServerComm  {
 		}
 	}
 
+	/**
+	 * Process reply messages in the LRU cache
+	 * @param msg
+	 * @return
+	 * @throws IOException
+	 */
 	public boolean invoSemProcess(byte[] msg) throws IOException {
 		UUID uuid = ServerUnmarshal.getUUID(msg); //incoming msg contains uuid and so do the messages cached. Difference: incoming - client msg format. cached - reply format
 		// Check for cached value in case of duplicate message

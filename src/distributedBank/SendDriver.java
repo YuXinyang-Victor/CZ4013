@@ -96,7 +96,11 @@ public class SendDriver {
 		
 
 	}
-	
+
+	/**
+	 * Check if has received the correct response from server
+	 * @param message
+	 */
 	public void updateReceiveStatus(byte[] message) {
 		Random rand = new Random();
 		
