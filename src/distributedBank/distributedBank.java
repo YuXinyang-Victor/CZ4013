@@ -40,8 +40,16 @@ public class distributedBank extends Thread{
 			
 			welcomeDisplay();
 			
-			int service_type = scanner.nextInt(); 
-			scanner.nextLine();
+			int service_type;
+			while (true) {
+			String service_type_str = scanner.nextLine();
+			try {
+				service_type = Integer.parseInt(service_type_str);break;
+			}
+			catch (NumberFormatException e) {
+				System.out.println("Please enter a number of your choice");
+			}
+			}
 			
 			switch(service_type) {
 				case 0: {
@@ -74,8 +82,6 @@ public class distributedBank extends Thread{
 						System.out.println("The password must be 6 characters long. ");
 					}
 					
-					//check whether we have the correct length. 
-					
 					int currency_type = 0;
 					String[] types = new String[4];
 					
@@ -86,14 +92,22 @@ public class distributedBank extends Thread{
 							types[count-1] = type.name();
 							System.out.println(count + ": " + type);
 							count ++;
-						}	
-						currency_type = scanner.nextInt();
-						if (currency_type < 1 || currency_type >= count) {
-							System.out.println("Sorry, you have selected a currency type that we do not support. Please choose from the list. ");
 						}
-						else {
-							break; 
+						String input_type = scanner.nextLine();
+						try {
+							currency_type = Integer.parseInt(input_type);
+							if (currency_type < 1 || currency_type >= count) {
+								System.out.println("Sorry, you have selected a currency type that we do not support. Please choose from the list. ");
+							}
+							else {
+								break; 
+							}
 						}
+						catch  (NumberFormatException e) {
+							System.out.println("Sorry, please enter a valid number");
+							
+						}
+						
 						
 						
 						
@@ -103,11 +117,17 @@ public class distributedBank extends Thread{
 					
 					while(true) {
 						System.out.println("Please input the amount you want to deposit:");
-						deposit_amount = scanner.nextDouble();
-						if(deposit_amount < 0) {
-							System.out.println("You must provide a deposit amount >= 0");
+						String deposit_amount_str = scanner.nextLine();
+						try {
+							deposit_amount = Double.parseDouble(deposit_amount_str);
+							if(deposit_amount < 0) {
+								System.out.println("You must provide a deposit amount >= 0");
+							}
+							else break;
 						}
-						else break;
+						catch (NumberFormatException e) {
+							System.out.println("Sorry, please enter a valid number");
+						}
 					}
 					
 					
@@ -127,14 +147,29 @@ public class distributedBank extends Thread{
 				case 2: {
 					//close account part
 					System.out.println("You are about to close an existing bank account. This action cannot be reversed.");
-					System.out.println("Please input your name: ");
-					String name = scanner.nextLine();
-					//check length of name
+					String name; 
+					while (true) {
+						System.out.println("Please input your name: ");
+						name = scanner.nextLine();
+						//check length of name
+						if(name.length() <= 32) break;
+						System.out.println("name should be no longer than 32 characters");
+					}
 					
-					System.out.println("Please input your account number: ");
-					int account_number = scanner.nextInt();
-					scanner.nextLine();
-					//validation check of whether the input is an integer
+					int account_number;
+					while(true) {
+						System.out.println("Please input your account number: ");
+						String acc_no_str = scanner.nextLine();
+						try {//validation check of whether the input is an integer
+							account_number = Integer.parseInt(acc_no_str);
+							break;
+					}
+						catch (NumberFormatException e) {
+							System.out.println("Please input a valid account number");
+							
+					}
+					}
+					
 					
 					System.out.println("Please input your password: ");
 					String password = scanner.nextLine();
@@ -157,13 +192,29 @@ public class distributedBank extends Thread{
 					double deposit_amount = 0;
 					
 					System.out.println("You have selected the deposit service. ");
-					System.out.println("Please input your name: ");
-					String name = scanner.nextLine();
+					String name; 
+					while (true) {
+						System.out.println("Please input your name: ");
+						name = scanner.nextLine();
+						//check length of name
+						if(name.length() <= 32) break;
+						System.out.println("name should be no longer than 32 characters");
+					}
 					//check length of name
 					
-					System.out.println("Please input your account number: ");
-					int account_number = scanner.nextInt();
-					scanner.nextLine();
+					int account_number;
+					while(true) {
+						System.out.println("Please input your account number: ");
+						String acc_no_str = scanner.nextLine();
+						try {//validation check of whether the input is an integer
+							account_number = Integer.parseInt(acc_no_str);
+							break;
+					}
+						catch (NumberFormatException e) {
+							System.out.println("Please input a valid account number");
+							
+					}
+					}
 					//validation check of whether the input is an integer
 					
 					System.out.println("Please input your password: ");
@@ -171,11 +222,17 @@ public class distributedBank extends Thread{
 					
 					while(true) {
 						System.out.println("Please input the amount you want to deposit:");
-						deposit_amount = scanner.nextDouble();
-						if(deposit_amount <= 0) {
-							System.out.println("You must provide a deposit amount > 0");
+						String deposit_amount_str = scanner.nextLine();
+						try {
+							deposit_amount = Double.parseDouble(deposit_amount_str);
+							if(deposit_amount < 0) {
+								System.out.println("You must provide a deposit amount >= 0");
+							}
+							else break;
 						}
-						else break;
+						catch (NumberFormatException e) {
+							System.out.println("Sorry, please enter a valid number");
+						}
 					}
 					
 					System.out.println("Processing your request, please wait...");
@@ -194,25 +251,49 @@ public class distributedBank extends Thread{
 					double withdraw_amount = 0;
 					
 					System.out.println("You have selected the cash withdrawal service. ");
-					System.out.println("Please input your name: ");
-					String name = scanner.nextLine();
+					String name; 
+					while (true) {
+						System.out.println("Please input your name: ");
+						name = scanner.nextLine();
+						//check length of name
+						if(name.length() <= 32) break;
+						System.out.println("name should be no longer than 32 characters");
+					}
 					//check length of name
 					
 					System.out.println("Please input your account number: ");
-					int account_number = scanner.nextInt();
-					scanner.nextLine();
+					int account_number;
+					while(true) {
+						System.out.println("Please input your account number: ");
+						String acc_no_str = scanner.nextLine();
+						try {//validation check of whether the input is an integer
+							account_number = Integer.parseInt(acc_no_str);
+							 break;
+					}
+						catch (NumberFormatException e) {
+							System.out.println("Please input a valid account number");
+							
+					}
+					}
 					//validation check of whether the input is an integer
 					
 					System.out.println("Please input your password: ");
 					String password = scanner.nextLine();
 					
+					
 					while(true) {
 						System.out.println("Please input the amount you want to withdraw:");
-						withdraw_amount = scanner.nextDouble();
-						if(withdraw_amount <= 0) {
-							System.out.println("You must provide a withdraw amount > 0");
+						String withdraw_amount_str = scanner.nextLine();
+						try {
+							withdraw_amount = Double.parseDouble(withdraw_amount_str);
+							if(withdraw_amount < 0) {
+								System.out.println("You must provide a withdrawal amount >= 0");
+							}
+							else break;
 						}
-						else break;
+						catch (NumberFormatException e) {
+							System.out.println("Sorry, please enter a valid number");
+						}
 					}
 					
 					System.out.println("Processing your request, please wait...");
@@ -231,13 +312,30 @@ public class distributedBank extends Thread{
 					double transfer_amount = 0;
 					
 					System.out.println("You have selected the amount transfer service. ");
-					System.out.println("Please input your name: ");
-					String from_name = scanner.nextLine();
+					String from_name; 
+					while (true) {
+						System.out.println("Please input your name: ");
+						from_name = scanner.nextLine();
+						//check length of name
+						if(from_name.length() <= 32) break;
+						System.out.println("name should be no longer than 32 characters");
+					}
 					//check length of name
 					
 					System.out.println("Please input your account number: ");
-					int from_account_number = scanner.nextInt();
-					scanner.nextLine();
+					int from_account_number;
+					while(true) {
+						System.out.println("Please input your account number: ");
+						String acc_no_str = scanner.nextLine();
+						try {//validation check of whether the input is an integer
+							from_account_number = Integer.parseInt(acc_no_str);
+							break;
+					}
+						catch (NumberFormatException e) {
+							System.out.println("Please input a valid account number");
+							
+					}
+					}
 					//validation check of whether the input is an integer
 					
 					System.out.println("Please input your password: ");
@@ -245,20 +343,43 @@ public class distributedBank extends Thread{
 					
 					while(true) {
 						System.out.println("Please input the amount you want to transfer:");
-						transfer_amount = scanner.nextDouble();
-						scanner.nextLine();
-						if(transfer_amount <= 0) {
-							System.out.println("You must provide a transfer amount > 0");
+						String transfer_amount_str = scanner.nextLine();
+						try {
+							transfer_amount = Double.parseDouble(transfer_amount_str);
+							if(transfer_amount < 0) {
+								System.out.println("You must provide a transfer amount >= 0");
+							}
+							else break;
 						}
-						else break;
+						catch (NumberFormatException e) {
+							System.out.println("Sorry, please enter a valid number");
+						}
 					}
 					
-					System.out.println("Please input the target account name: ");
-					String to_name = scanner.nextLine();
-					//check length of name
+					String to_name; 
+					while (true) {
+						System.out.println("Please input the target account name: ");
+						to_name = scanner.nextLine();
+						//check length of name
+						if(to_name.length() <= 32) break;
+						System.out.println("name should be no longer than 32 characters");
+					}
+					
 					
 					System.out.println("Please input the target account number: ");
-					int to_account_number = scanner.nextInt();
+					int to_account_number;
+					while(true) {
+						System.out.println("Please input your account number: ");
+						String acc_no_str = scanner.nextLine();
+						try {//validation check of whether the input is an integer
+							to_account_number = Integer.parseInt(acc_no_str);
+							break;
+					}
+						catch (NumberFormatException e) {
+							System.out.println("Please input a valid account number");
+							
+					}
+					}
 					//validation check of whether the input is an integer
 					
 					System.out.println("Processing your request, please wait...");
@@ -275,13 +396,29 @@ public class distributedBank extends Thread{
 				case 6: {
 					//change currency type part
 					System.out.println("You have selected the change currency type service. ");
-					System.out.println("Please input your name: ");
-					String name = scanner.nextLine();
+					String name; 
+					while (true) {
+						System.out.println("Please input your name: ");
+						name = scanner.nextLine();
+						//check length of name
+						if(name.length() <= 32) break;
+						System.out.println("name should be no longer than 32 characters");
+					}
 					//check length of name
-					
-					System.out.println("Please input your account number: ");
-					int account_number = scanner.nextInt();
-					scanner.nextLine();
+
+					int account_number;
+					while(true) {
+						System.out.println("Please input your account number: ");
+						String acc_no_str = scanner.nextLine();
+						try {//validation check of whether the input is an integer
+							account_number = Integer.parseInt(acc_no_str);
+							break;
+					}
+						catch (NumberFormatException e) {
+							System.out.println("Please input a valid account number");
+							
+					}
+					}
 					//validation check of whether the input is an integer
 					
 					System.out.println("Please input your password: ");
@@ -298,12 +435,19 @@ public class distributedBank extends Thread{
 							System.out.println(count + ": " + type);
 							count ++;
 						}
-						currency_type = scanner.nextInt();
-						if (currency_type < 1 || currency_type > count) {
-							System.out.println("Sorry, you have selected a currency type that we do not support. Please choose from the list. ");
+						String input_type = scanner.nextLine();
+						try {
+							currency_type = Integer.parseInt(input_type);
+							if (currency_type < 1 || currency_type >= count) {
+								System.out.println("Sorry, you have selected a currency type that we do not support. Please choose from the list. ");
+							}
+							else {
+								break; 
+							}
 						}
-						else {
-							break; 
+						catch  (NumberFormatException e) {
+							System.out.println("Sorry, please enter a valid number");
+							
 						}
 					}
 					String type_str = types[currency_type-1];
