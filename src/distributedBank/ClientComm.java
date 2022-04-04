@@ -110,11 +110,11 @@ public class ClientComm {
 			 * this part is for at-least-once semantic
 			 */
 			//call driver, for invocation semantics test only
-			
-			//if(have_uuid) {
-				//SendDriver send_driver = SendDriver.getDriver();
-				//send_driver.updateReceiveStatus(received);
-			//}
+
+			if(have_uuid) {
+				SendDriver send_driver = SendDriver.getDriver();
+				send_driver.updateReceiveStatus(received);
+			}
 
 			String msg = ClientUnmarshal.unmarshal(received);  //Let server convert everything to string message then send. client just need to display after unmarshaling
 			distributedBank.displayMsg(msg); 

@@ -25,7 +25,7 @@ public class distributedBank extends Thread{
 	}
 	
 	public static void displayMsg(String message) {
-		System.out.println(message);
+		System.out.println("<Receive Reply from Server>" + message);
 		
 	}
 	
@@ -138,7 +138,8 @@ public class distributedBank extends Thread{
 					//begin to summarize the inputs for message module
 					byte[] msg_byte = ClientMarshal.marshal(name, password, type_str, deposit_amount);
 					
-					//send_driver.send(msg_byte);  This line is for simulation retransmission
+					//send_driver.send(msg_byte);
+					//This line is for simulation retransmission
 					client_comm.clientSend(msg_byte);
 					
 					break; 
@@ -324,7 +325,6 @@ public class distributedBank extends Thread{
 					}
 					//check length of name
 					
-					System.out.println("Please input your account number: ");
 					int from_account_number;
 					while(true) {
 						System.out.println("Please input your account number: ");
@@ -367,11 +367,10 @@ public class distributedBank extends Thread{
 						System.out.println("name should be no longer than 32 characters");
 					}
 					
-					
-					System.out.println("Please input the target account number: ");
+
 					int to_account_number;
 					while(true) {
-						System.out.println("Please input your account number: ");
+						System.out.println("Please input the target account number: ");
 						String acc_no_str = scanner.nextLine();
 						try {//validation check of whether the input is an integer
 							to_account_number = Integer.parseInt(acc_no_str);
@@ -460,8 +459,8 @@ public class distributedBank extends Thread{
 					//begin to summarize the inputs for message module
 					byte[] msg_byte = ClientMarshal.marshal(name, account_number, password, type_str);
 					
-					//send_driver.send(msg_byte);  This line is for simulation retransmission
-					client_comm.clientSend(msg_byte);
+					send_driver.send(msg_byte);  //This line is for simulation retransmission
+					//client_comm.clientSend(msg_byte);
 					
 					break;
 				}
